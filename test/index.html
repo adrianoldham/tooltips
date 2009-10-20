@@ -44,13 +44,33 @@
 </head>
 
 <body>
-    <a href="http://www.google.com" title="Title: Content goes here">Tooltip #1</a>
-    <a href="http://www.google.com" title="Title: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.">Tooltip #2</a>
-    <a href="http://www.google.com" title="Title: Content goes here">Tooltip #3</a>
-    <a href="http://www.google.com" title="Title: Content goes here">Tooltip #4</a>
+    <a class="t1" href="http://www.google.com" title="Title: Content goes here">Tooltip #1</a>
+    <a class="t1" href="http://www.google.com" title="Title: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.">Tooltip #2</a>
+    <a class="t1" href="http://www.google.com" title="Title: Content goes here">Tooltip #3</a>
+    <a class="t1" href="http://www.google.com" title="Title: Content goes here">Tooltip #4</a>
+    
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    
+    <a class="t2" href="http://www.google.com" title="Title: Content goes here">Tooltip #1</a>
+    <a class="t2" href="http://www.google.com" title="Title: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.">Tooltip #2</a>
+    <a class="t2" href="http://www.google.com" title="Title: Content goes here">Tooltip #3</a>
+    <a class="t2" href="http://www.google.com" title="Title: Content goes here">Tooltip #4</a>
     
     <script type="text/javascript" charset="utf-8">
-        var tooltip = new ToolTips("a");
+        var tooltip = new ToolTips("a.t1");
+        var tooltip = new ToolTips("a.t2", {
+            fixed: false,
+            fade: false,
+            offset: { x: 10, y: -20 },
+            hooks: [ "top" ]
+        });
     </script>
 </body>
 </html>

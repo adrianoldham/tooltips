@@ -8,9 +8,9 @@ var ToolTips = Class.create({
         this.elements.each(function(element) {
             element.observe('mousemove', this.updatePosition.bindAsEventListener(this));
             
-            element.observe('mouseover', function() {
+            element.observe('mouseover', function(event) {
                 clearTimeout(this.delayTimer);
-                this.delayTimer = setTimeout(this.showToolTip.bind(this, element), this.options.showDelay)
+                this.delayTimer = setTimeout(this.showToolTip.bind(this, event, element), this.options.showDelay)
             }.bind(this));
             
             element.observe('mouseout', function() {
@@ -93,7 +93,7 @@ var ToolTips = Class.create({
         });
     },
     
-    showToolTip: function(element) {        
+    showToolTip: function(event, element) {        
         var data = element.title.split(this.options.delimiter);
         var title = data[0];
         var content = data[1];
@@ -104,8 +104,8 @@ var ToolTips = Class.create({
         // Show, but make transparent so that we can grab the size
         this.toolTipContainer.show();
         this.toolTipContainer.setOpacity(0);
-        
-        this.updatePosition(null, element);
+        console.log(event)
+        this.updatePosition(event, element);
         
         // Fade or not
         if (this.options.fade) {
