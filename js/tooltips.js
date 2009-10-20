@@ -6,6 +6,10 @@ var ToolTips = Class.create({
         
         // Attach mouse over and mouse out events
         this.elements.each(function(element) {
+            // Store title inside tooltip variable inside of the element and remove default tooltip
+            element.tooltip = element.title;
+            element.title = "";
+            
             element.observe('mousemove', this.updatePosition.bindAsEventListener(this));
             
             element.observe('mouseover', function(event) {
@@ -94,7 +98,7 @@ var ToolTips = Class.create({
     },
     
     showToolTip: function(event, element) {        
-        var data = element.title.split(this.options.delimiter);
+        var data = element.tooltip.split(this.options.delimiter);
         var title = data[0];
         var content = data[1];
         
@@ -104,7 +108,7 @@ var ToolTips = Class.create({
         // Show, but make transparent so that we can grab the size
         this.toolTipContainer.show();
         this.toolTipContainer.setOpacity(0);
-        console.log(event)
+        
         this.updatePosition(event, element);
         
         // Fade or not
