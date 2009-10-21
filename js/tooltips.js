@@ -3,11 +3,24 @@
 // tooltip.reload();                // Updates the tooltips
 // tooltip.getToolTipContainer();   // Returns the dom element you can apply ShadowMe to
 
+Array.prototype.index = function(val) {
+    for (var i = 0, l = this.length; i < l; i++) {
+        if (this[i] == val) return i;
+    }
+
+    return null;
+};
+
+Array.prototype.include = function(val) {
+    return this.index(val) !== null;
+};
+
 var ToolTips = Class.create({
-    initialize: function(selectors, options) {
+    initialize: function(selector, options) {
         this.options = Object.extend(Object.extend({ }, ToolTips.DefaultOptions), options || { });
         
-        this.targets = $$(selectors);
+        this.selector = selector;        
+        this.targets = $$(selector);
         
         // Attach mouse over and mouse out events
         this.targets.each(function(target) {
@@ -15,15 +28,7 @@ var ToolTips = Class.create({
             target.tooltip = target.title;
             target.title = "";
             
-            target.observe('mouseover', function(event, target) {
-                clearTimeout(this.delayTimer);
-                this.delayTimer = setTimeout(this.showToolTip.bind(this, event, target), this.options.showDelay)
-            }.bindAsEventListener(this, target));
-            
-            target.observe('mouseout', function() {
-                clearTimeout(this.delayTimer);
-                this.hideToolTip(target);
-            }.bind(this));
+            this.setupTargetEvents(target);
         }.bind(this));
         
         this.generateToolTip();
@@ -35,16 +40,36 @@ var ToolTips = Class.create({
         }
     },
     
+    setupTargetEvents: function(target) {
+        target.observe('mouseover', function(event, target) {
+            clearTimeout(this.delayTimer);
+            this.delayTimer = setTimeout(this.showToolTip.bind(this, event, target), this.options.showDelay)
+        }.bindAsEventListener(this, target));
+        
+        target.observe('mouseout', function() {
+            clearTimeout(this.delayTimer);
+            this.hideToolTip(target);
+        }.bind(this));  
+    },
+    
     // Call this externally to reload the tooltips
     reload: function() {
+        var tempTargets = $$(this.selector);
+
         // Reload the tooltips
-        this.targets.each(function(target) {
+        tempTargets.each(function(target) {
             // Only update if changed
             if (target.title != "") {
                 target.tooltip = target.title;
                 target.title = "";
             }
-        });
+            
+            if (!this.targets.include(target)) {
+                this.setupTargetEvents(target);
+            }
+        }.bind(this));
+        
+        this.targets = tempTargets;
     },
     
     // Returns the tooltip container that you can apply ShadowMe to

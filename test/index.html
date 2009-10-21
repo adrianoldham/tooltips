@@ -53,7 +53,7 @@
 
 <body>
     <h2>Fixed, with scrolling adjusted positions</h2>
-    <div style="height: 200px; border: 1px solid black; width: 300px; overflow: scroll">
+    <div id="t1" style="height: 200px; border: 1px solid black; width: 300px; overflow: scroll">
         <br/>
         <a class="t1" id="rename" href="http://www.google.com" title="Title: Content goes here">Renamed Tooltip #1</a><br/>
         <a class="t1" href="http://www.google.com" title="Title: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.">Tooltip #2</a>
@@ -80,6 +80,9 @@
         
         // Test renamed tooltip
         $('rename').title = "Renamed tooltip: Renamed content";
+        var anchor = new Element("a", { "class": "t1", "title": "Test add: This has been added with reload", "href": "http://www.google.com" });
+        anchor.innerHTML = "Added Tooltip"
+        $("t1").insert(anchor);
         tooltip1.reload(); // Reload
         
         // Returns the tooltip container you can apply ShadowMe to
