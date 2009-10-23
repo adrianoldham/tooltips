@@ -45,7 +45,7 @@ var ToolTips = Class.create({
             target.title = "";
         }
         
-        if (target.rel != "" && this.options.preloadImages) {
+        if ((target.rel != "" && target.rel != undefined) && this.options.preloadImages) {
             // Preload the tooltip image if one exists
             target.ttImage = new Element("img", { "src": target.rel, "class": this.options.imageClass });
         } else {
@@ -78,10 +78,11 @@ var ToolTips = Class.create({
         }.bindAsEventListener(this, target));  
     },
     
-    applyShadow: function(opts) {
+    applyShadow: function(opts, dontHide) {
         // Setup the shadows with given options and hide it
         this.shadowContainer = this.toolTipContainer.applyShadow(opts);
-        this.shadowContainer.hide();
+        
+        if (!dontHide) this.shadowContainer.hide();
     },
     
     // Call this externally to reload the tooltips
@@ -285,6 +286,10 @@ var ToolTips = Class.create({
         
         this.toolTipContainer.setStyle({ display: oldDisplay })
         this.toolTipContainer.setOpacity(oldOpacity);
+        
+        if (this.shadowContainer != undefined) {
+            this.applyShadow({}, true);
+        }
     },
     
     showToolTip: function(event, target) {        
@@ -309,7 +314,7 @@ var ToolTips = Class.create({
         }
         
         // If image doesn't exist, then didn't preload, so load here
-        if (target.ttImage == null && target.rel != "") {
+        if (target.ttImage == null && (target.rel != "" && target.rel != undefined)) {
             target.ttImage = new Element("img", { "src": target.rel, "class": this.options.imageClass });
         }
         

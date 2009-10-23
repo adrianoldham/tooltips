@@ -63,14 +63,15 @@
     
     <script type="text/javascript" charset="utf-8">
         var tooltip1 = new ToolTips("a.t1");
-        tooltip1.applyShadow({ imagePath: "../images/imgzoomer/" });
         
         var tooltip2 = new ToolTips("a.t2", {
             fixed: false,
             fade: false,
             hook: { target: "bottomRight", tip: "left" },
-            offset: { x: 20, y: 0 }
+            offset: { x: 40, y: 0 }
         });
+        
+        tooltip2.applyShadow({ imagePath: "../images/imgzoomer/" });
         
         // Test renamed tooltip
         $('rename').title = "Renamed tooltip: Renamed content";
