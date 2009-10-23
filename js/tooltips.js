@@ -284,7 +284,7 @@ var ToolTips = Class.create({
             left: startingPosition.x + "px", top: startingPosition.y + "px"
         });
         
-        this.toolTipContainer.setStyle({ display: oldDisplay })
+        this.toolTipContainer.setStyle({ display: oldDisplay });
         this.toolTipContainer.setOpacity(oldOpacity);
         
         if (this.shadowContainer != undefined) {
