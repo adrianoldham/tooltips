@@ -2,6 +2,7 @@
 // ------------------------------
 // tooltip.reload();                // Updates the tooltips
 // tooltip.getToolTipContainer();   // Returns the dom element you can apply ShadowMe to
+// toolTip.applyShadow();           // ShadowMe and ToolTips integration
 
 Array.prototype.index = function(val) {
     for (var i = 0, l = this.length; i < l; i++) {
@@ -24,10 +25,7 @@ var ToolTips = Class.create({
         
         // Attach mouse over and mouse out events
         this.targets.each(function(target) {
-            // Store title inside tooltip variable inside of the target and remove default tooltip
-            target.tooltip = target.title;
-            target.title = "";
-            
+            this.setupContent(target);
             this.setupTargetEvents(target);
         }.bind(this));
         
@@ -40,16 +38,50 @@ var ToolTips = Class.create({
         }
     },
     
+    setupContent: function(target) {
+        // Store title inside tooltip variable inside of the target and remove default tooltip
+        if (target.title != "") {
+            target.ttContent = target.title;
+            target.title = "";
+        }
+        
+        if (target.rel != "" && this.options.preloadImages) {
+            // Preload the tooltip image if one exists
+            target.ttImage = new Element("img", { "src": target.rel, "class": this.options.imageClass });
+        } else {
+            // Clear the image
+            target.ttImage = undefined;
+        }
+    },
+    
     setupTargetEvents: function(target) {
         target.observe('mouseover', function(event, target) {
             clearTimeout(this.delayTimer);
-            this.delayTimer = setTimeout(this.showToolTip.bind(this, event, target), this.options.showDelay)
+            
+            // If there's an image, then instead of delay, wait til the image is fully loaded before displaying
+            if (target.ttImage != undefined && !target.ttImage.complete) {
+                target.ttImage.observe('load', this.showToolTip.bind(this, event, target));
+            }
+            
+            this.delayTimer = setTimeout(this.showToolTip.bind(this, event, target), this.options.showDelay)   
         }.bindAsEventListener(this, target));
         
-        target.observe('mouseout', function() {
+        target.observe('mouseout', function(event, target) {
             clearTimeout(this.delayTimer);
+            
+            // If still loading image, make sure load doens't trigger showing of that image
+            if (target.ttImage != undefined) {
+                target.ttImage.stopObserving('load');
+            }
+            
             this.hideToolTip(target);
-        }.bind(this));  
+        }.bindAsEventListener(this, target));  
+    },
+    
+    applyShadow: function(opts) {
+        // Setup the shadows with given options and hide it
+        this.shadowContainer = this.toolTipContainer.applyShadow(opts);
+        this.shadowContainer.hide();
     },
     
     // Call this externally to reload the tooltips
@@ -58,11 +90,7 @@ var ToolTips = Class.create({
 
         // Reload the tooltips
         tempTargets.each(function(target) {
-            // Only update if changed
-            if (target.title != "") {
-                target.tooltip = target.title;
-                target.title = "";
-            }
+            this.setupContent(target);
             
             if (!this.targets.include(target)) {
                 this.setupTargetEvents(target);
@@ -156,6 +184,9 @@ var ToolTips = Class.create({
                 if (targetHook == "bottom" || targetHook == "top") startingPosition.x += parseInt(targetSize.width / 2.0);
                 if (targetHook == "right" || targetHook == "left") startingPosition.y += parseInt(targetSize.height / 2.0);
             } else {
+                // Don't track if no mouse position found
+                if (this.mouse == null) return;
+                
                 // Begin from where the mouse is
                 startingPosition = { x: this.mouse.x, y: this.mouse.y };
             }
@@ -257,12 +288,35 @@ var ToolTips = Class.create({
     },
     
     showToolTip: function(event, target) {        
-        var data = target.tooltip.split(this.options.delimiter);
+        var data = target.ttContent.split(this.options.delimiter);
         var title = data[0];
         var content = data[1];
         
+        // Hide content div if no content
+        if (content == undefined) {
+            this.toolTipContent.hide();
+        } else {
+            this.toolTipContent.show();
+        }
+        
         this.toolTipTitle.innerHTML = title;
         this.toolTipContent.innerHTML = content;
+
+        // Remove old image first
+        var oldImage = this.toolTipContainer.select('img.' + this.options.imageClass);
+        if (oldImage.length > 0) {
+            oldImage.invoke('remove');
+        }
+        
+        // If image doesn't exist, then didn't preload, so load here
+        if (target.ttImage == null && target.rel != "") {
+            target.ttImage = new Element("img", { "src": target.rel, "class": this.options.imageClass });
+        }
+        
+        // If an image, then add it, otherwise remove any old ones
+        if (target.ttImage != null && target.ttImage.complete) {
+            this.toolTipContainer.insert(target.ttImage);
+        }
         
         // Show, but make transparent so that we can grab the size
         this.toolTipContainer.setOpacity(0);
@@ -270,27 +324,56 @@ var ToolTips = Class.create({
         
         this.updatePosition(target);
         
-        // Fade or not
-        if (this.options.fade) {
-            if (this.lastEffect != null) this.lastEffect.cancel();
-            this.lastEffect = new Effect.Appear(this.toolTipContainer, { duration: this.options.fadeSpeed / 1000 });           
-        } else {
-            this.toolTipContainer.setOpacity(1);   
+        var fadeSpeed = this.options.fade ? this.options.fadeSpeed / 1000 : 0;
+        
+        // Array to store all effects to animate in parallel
+        var effects = [ new Effect.Appear(this.toolTipContainer, { sync: true }) ];
+        var afterFinish = null;
+        
+        // If a shadow container exists then reapply shadow, and then make it fade in
+        if (this.shadowContainer != undefined) {
+            this.applyShadow();
+            
+            // If IE, then show shadow AFTER fading tooltip in
+            if (isIE) {
+                afterFinish =  function() {
+                    this.shadowContainer.show();
+                }.bind(this);
+            } else {
+                effects.push(new Effect.Appear(this.shadowContainer, { sync: true }));
+            }
         }
+        
+        // Parallel effect to fade it all at once
+        if (this.lastEffect != null) this.lastEffect.cancel();
+        this.lastEffect = new Effect.Parallel(effects, { duration: fadeSpeed, afterFinish: afterFinish });        
     },
     
     hideToolTip: function() {
-        // Fade or not
-        if (this.options.fade) {
-            if (this.lastEffect != null) this.lastEffect.cancel();
-            this.lastEffect = new Effect.Fade(this.toolTipContainer, { duration: this.options.fadeSpeed / 1000 });
-        } else {
-            this.toolTipContainer.hide();
+        var fadeSpeed = this.options.fade ? this.options.fadeSpeed / 1000 : 0;
+                
+        // Array to store all effects to animate in parallel
+        var effects = [ new Effect.Fade(this.toolTipContainer, { sync: true }) ];
+        
+        // If a shadow container exists then reapply shadow, and then make it fade in
+        if (this.shadowContainer != undefined) {
+            // If IE then hide right away
+            if (isIE) {
+                this.shadowContainer.hide();
+            } else {
+                effects.push(new Effect.Fade(this.shadowContainer, { sync: true }));   
+            }
         }
+        
+        if (this.lastEffect != null) this.lastEffect.cancel();
+        this.lastEffect = new Effect.Parallel(effects, { duration: fadeSpeed });
     }
 });
 
 ToolTips.DefaultOptions = {
+    // Whether to preload images or not
+    preloadImages:      false,
+    
     // Mirror classes
     mirrorClass:            "mirrored",
     verticalMirrorClass:    "vertical",
@@ -322,5 +405,6 @@ ToolTips.DefaultOptions = {
     containerClass:     "tooltip-container",
     titleClass:         "tooltip-title",
     contentClass:       "tooltip-content",
-    stemClass:          "tooltip-stem"
+    stemClass:          "tooltip-stem",
+    imageClass:         "tooltip-image"
 };
