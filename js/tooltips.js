@@ -187,6 +187,8 @@ var ToolTips = Class.create({
             } else {
                 // Don't track if no mouse position found
                 if (this.mouse == null) return;
+                if (this.mouse.x == null) return;
+                if (this.mouse.y == null) return;
                 
                 // Begin from where the mouse is
                 startingPosition = { x: this.mouse.x, y: this.mouse.y };
@@ -227,6 +229,20 @@ var ToolTips = Class.create({
                 bottom: startingPosition.y + toolTipSize.height,
                 left:   startingPosition.x
             };
+            
+            // Use shadow containers bounds for mirroring 
+            if (this.shadowContainer != null) {
+                var shadowDepth = this.toolTipContainer.shadowMe.options.theme.shadowDepth;
+                var shadowPosition = { x: startingPosition.x - shadowDepth, y: startingPosition.y - shadowDepth  };
+                var shadowSize = { width: toolTipSize.width + shadowDepth * 2, height: toolTipSize.height + shadowDepth * 2 };
+                
+                toolTipBounds = {
+                    top:    shadowPosition.y,
+                    right:  shadowPosition.x + shadowSize.width,
+                    bottom: shadowPosition.y + shadowSize.height,
+                    left:   shadowPosition.x
+                };
+            }
             
             // Remove mirror class first (reset mirror state) - only remove if first check
             if (level == 0) {
