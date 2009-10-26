@@ -230,6 +230,9 @@ var ToolTips = Class.create({
                 left:   startingPosition.x
             };
 
+            // Set tipHook as additional container class
+            this.toolTipContainer.addClassName(tipHook);
+
             // Use shadow containers bounds for mirroring
             if (this.shadowContainer != null) {
                 var shadowDepth = this.toolTipContainer.shadowMe.options.theme.shadowDepth;
@@ -249,6 +252,7 @@ var ToolTips = Class.create({
                 this.toolTipContainer.removeClassName(this.options.mirrorClass);
                 this.toolTipContainer.removeClassName(this.options.verticalMirrorClass);
                 this.toolTipContainer.removeClassName(this.options.horizontalMirrorClass);
+                this.toolTipContainer.removeClassName(tipHook);
             }
 
             // Check to left/right mirroring
