@@ -356,7 +356,7 @@ var ToolTips = Class.create({
             this.applyShadow();
 
             // If IE, then show shadow AFTER fading tooltip in
-            if (isIE) {
+            if (hasNoAlphaAnimationSupport) {
                 afterFinish =  function() {
                     this.shadowContainer.show();
                 }.bind(this);
@@ -379,7 +379,7 @@ var ToolTips = Class.create({
         // If a shadow container exists then reapply shadow, and then make it fade in
         if (this.shadowContainer != undefined) {
             // If IE then hide right away
-            if (isIE) {
+            if (hasNoAlphaAnimationSupport) {
                 this.shadowContainer.hide();
             } else {
                 effects.push(new Effect.Fade(this.shadowContainer, { sync: true }));
