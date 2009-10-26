@@ -254,7 +254,7 @@ var ToolTips = Class.create({
             // Set tipHook as additional container class
             "left right top bottom topleft topright bottomleft bottomright".split(' ').each(function(hook) {
                 this.toolTipContainer.removeClassName(hook);                
-            }.bind(this))
+            }.bind(this));
 
             this.toolTipContainer.addClassName(tipHook);
 
