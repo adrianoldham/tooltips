@@ -11,36 +11,165 @@
     <script type="text/javascript" charset="utf-8" src="../js/shadowme.js"></script>
 
 	<style type="text/css" media="screen">
-	    .tooltip-container {
-	        background-color: #aaa;
+	    html {
+            font-size: 100%;
+	    }
+
+        body {
+	        background-color: #ccc;
 	        font-family: Arial, "MS Trebuchet", sans-serif;
-	        border: 2px solid #000;
-	        font-size: 11px;
-	    }
-	    
-	    .tooltip-title {
-	        background-color: #fff;
-	        color: #000;
-	        margin: 0;
-	        font-size: 1.2em;
-	        padding: 5px 10px;
-	    }
-	    
-	    .tooltip-content {
-	        padding: 10px;
-	    }
-	    
-	    .tooltip-stem {
-	        display: none;
+            font-size: 0.75em;
+            line-height: 1.5;
 	    }
 	    
 	    .t1 {
 	        margin: 50px 0;
 	    }
-	    
-	    body {
-	        margin-left: 100px;
-	    }
+
+        /* @group tooltips */
+
+        .tooltip-container {
+	        min-width: 90px;
+	        /*max-width: 140px;*/
+	        padding: 2px 5px;
+	        background-color: #000;
+	        border: 1px solid #fff;
+	        color: #fff;
+	        text-align: left;
+	        z-index: 1000;
+	        position: relative;
+	        overflow: visible;
+        }
+
+        .tooltip-container .tooltip-title {
+	        font-size: 1.1em;
+	        font-weight: bold;
+	        margin: 0;
+        }
+
+        .tooltip-container .tooltip-image {
+	        display: block;
+	        margin: 3px 0;
+	        padding: 0;
+	        background: transparent url(images/spinner-lrg.gif) no-repeat 50% 50%;
+        }
+
+        .tooltip-container .tooltip-stem {
+	        position: absolute;
+	        background: transparent no-repeat;
+	        width: 10px;
+	        height: 10px;
+        }
+
+        /* @group top */
+
+        .tooltip-container.top .tooltip-stem,
+        .tooltip-container.topleft .tooltip-stem,
+        .tooltip-container.topright .tooltip-stem {
+	        background-image: url(images/tooltip-stem-v.png);
+	        top: -10px;
+        }
+
+        .tooltip-container.top .tooltip-stem {
+	        left: 0;
+	        width: 100%;
+	        background-position: center top;
+        }
+
+        .tooltip-container.topleft .tooltip-stem {
+	        left: -1px;
+	        background-position: left top;
+        }
+
+        .tooltip-container.topright .tooltip-stem {
+	        right: -1px;
+	        background-position: right top;
+        }
+
+        /* @end */
+
+        /* @group bottom */
+
+        .tooltip-container.bottom .tooltip-stem,
+        .tooltip-container.bottomleft .tooltip-stem,
+        .tooltip-container.bottomright .tooltip-stem {
+	        background-image: url(images/tooltip-stem-v.png);
+	        bottom: -10px;
+        }
+
+        .tooltip-container.bottom .tooltip-stem {
+	        left: 0;
+	        width: 100%;
+	        background-position: center bottom;
+        }
+
+        .tooltip-container.bottomleft .tooltip-stem {
+	        left: -1px;
+	        background-position: left bottom;
+        }
+
+        .tooltip-container.bottomright .tooltip-stem {
+	        right: -1px;
+	        background-position: right bottom;
+        }
+
+        /* @end */
+
+        /* @group left */
+
+        .tooltip-container.left .tooltip-stem,
+        .tooltip-container.lefttop .tooltip-stem,
+        .tooltip-container.leftbottom .tooltip-stem {
+	        background-image: url(images/tooltip-stem-h.png);
+	        left: -10px;
+        }
+
+        .tooltip-container.left .tooltip-stem {
+	        top: 0;
+	        height: 100%;
+	        background-position: left center;
+        }
+
+        .tooltip-container.lefttop .tooltip-stem {
+	        top: -1px;
+	        background-position: left top;
+        }
+
+        .tooltip-container.leftbottom .tooltip-stem {
+	        bottom: -1px;
+	        background-position: left bottom;
+        }
+
+        /* @end */
+
+        /* @group right */
+
+        .tooltip-container.right .tooltip-stem,
+        .tooltip-container.righttop .tooltip-stem,
+        .tooltip-container.rightbottom .tooltip-stem {
+	        background: url(images/tooltip-stem-h.png);
+	        right: -10px;
+        }
+
+        .tooltip-container.right .tooltip-stem {
+	        top: 0;
+	        height: 100%;
+	        background-position: right center;
+        }
+
+        .tooltip-container.righttop .tooltip-stem {
+        	top: -1px;
+	        background-position: right top;
+        }
+
+        .tooltip-container.rightbottom .tooltip-stem {
+	        bottom: -1px;
+	        background-position: right bottom;
+        }
+
+        /* @end */
+
+        /* @end */
 	</style>
 </head>
 
@@ -67,15 +196,15 @@
         var tooltip2 = new ToolTips("a.t2", {
             fixed: false,
             fade: false,
-            hook: { target: "bottomRight", tip: "left" },
+            hook: { target: "bottomRight", tip: "lefttop" },
             offset: { x: 40, y: 0 }
         });
         
-        tooltip2.applyShadow({ imagePath: "../images/imgzoomer/" });
+        tooltip2.applyShadow({ imagePath: "..images/imgzoomer/" });
         
         // Test renamed tooltip
         $('rename').title = "Renamed tooltip: Renamed content";
-        var anchor = new Element("a", { "class": "t1", "title": "Test add: This has been added with reload", "href": "http://www.google.com", "rel": "http://www.prototypejs.org/images/logo-home.gif" });
+        var anchor = new Element("a", { "class": "t1", "title": "Test add: This has been added with reload", "href": "http://www.google.com", "rel": "http://www.prototypejs.orgimages/logo-home.gif" });
         anchor.innerHTML = "Added Tooltip"
         $("t1").insert(anchor);
         tooltip1.reload(); // Reload
