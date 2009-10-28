@@ -168,7 +168,7 @@ var ToolTips = Class.create({
 
                 // Adjust positioing for scrolled parents
                 var t = $(target.parentNode);
-                while (t != null && t.tagName != 'body') {
+                while (t != null && t.tagName != 'BODY') {
                     if (t.scrollLeft != undefined) startingPosition.x -= t.scrollLeft;
                     if (t.scrollTop != undefined) startingPosition.y -= t.scrollTop;
                     t = $(t.parentNode);
