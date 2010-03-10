@@ -3,7 +3,7 @@
 // tooltip.reload();                // Updates the tooltips
 // tooltip.getToolTipContainer();   // Returns the dom element you can apply ShadowMe to
 // toolTip.applyShadow();           // ShadowMe and ToolTips integration
-
+hasNoAlphaAnimationSupport = false;
 Array.prototype.index = function(val) {
     for (var i = 0, l = this.length; i < l; i++) {
         if (this[i] == val) return i;
@@ -79,8 +79,10 @@ var ToolTips = Class.create({
     },
 
     applyShadow: function(opts, dontHide) {
+        this.shadowOpts = opts;
+        
         // Setup the shadows with given options and hide it
-        this.shadowContainer = this.toolTipContainer.applyShadow(opts);
+        this.shadowContainer = this.toolTipContainer.applyShadow(this.shadowOpts);
 
         if (!dontHide) this.shadowContainer.hide();
     },
@@ -311,7 +313,7 @@ var ToolTips = Class.create({
         this.toolTipContainer.setOpacity(oldOpacity);
 
         if (this.shadowContainer != undefined) {
-            this.applyShadow({}, true);
+            this.applyShadow(this.shadowOpts, true);
         }
     },
 
@@ -359,7 +361,7 @@ var ToolTips = Class.create({
         var afterFinish = null;
 
         // If a shadow container exists then reapply shadow, and then make it fade in
-        if (this.shadowContainer != null) {
+        if (this.shadowContainer != undefined) {
             // If IE, then show shadow AFTER fading tooltip in
             if (hasNoAlphaAnimationSupport) {
                 afterFinish =  function() {

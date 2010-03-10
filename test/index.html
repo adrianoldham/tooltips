@@ -195,12 +195,12 @@
         
         var tooltip2 = new ToolTips("a.t2", {
             fixed: false,
-            fade: false,
+            fade: true,
             hook: { target: "bottomRight", tip: "lefttop" },
             offset: { x: 40, y: 0 }
         });
         
-        tooltip2.applyShadow({ imagePath: "..images/imgzoomer/" });
+        tooltip2.applyShadow({ imagePath: "../images/imgzoomer/" });
         
         // Test renamed tooltip
         $('rename').title = "Renamed tooltip: Renamed content";
