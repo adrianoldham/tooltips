@@ -359,9 +359,7 @@ var ToolTips = Class.create({
         var afterFinish = null;
 
         // If a shadow container exists then reapply shadow, and then make it fade in
-        if (this.shadowContainer != undefined) {
-            this.applyShadow();
-
+        if (this.shadowContainer != null) {
             // If IE, then show shadow AFTER fading tooltip in
             if (hasNoAlphaAnimationSupport) {
                 afterFinish =  function() {
