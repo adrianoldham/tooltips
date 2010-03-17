@@ -369,7 +369,10 @@ var ToolTips = Class.create({
 
         // If an image, then add it, otherwise remove any old ones
         if (target.ttImage != null) {
+            this.toolTipImageContainer.show();
             this.toolTipImageContainer.insert(target.ttImage);
+        } else {
+            this.toolTipImageContainer.hide();
         }
 
         // Show, but make transparent so that we can grab the size
