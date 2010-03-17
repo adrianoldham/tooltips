@@ -340,30 +340,35 @@ var ToolTips = Class.create({
             oldImage.invoke('remove');
         }
 
+        this.toolTipImageContainer.setStyle({ 
+            'width': 'auto',
+            'height': 'auto'
+        });
+
         // If image doesn't exist, then didn't preload, so load here
         if (target.ttImage == null && (target.rel != "" && target.rel != undefined)) {
-            var rel = target.rel;
-            
             // Set size of image container based on rel
             if (target.rel.indexOf('?') != -1) {
-                var size = target.rel.split('?')[1].split(',');
+                var size;
+                var params = target.rel.split('?')[1].split('&');
+                params.each(function(param) {
+                    var keyValue = param.split('=');
+                    if (keyValue[0] == this.options.imageSizeParameterName) {
+                        size = keyValue[1].split(',');
+                    }
+                }.bind(this));
+                
                 this.toolTipImageContainer.setStyle({ 
                     'width': size[0] + "px",
                     'height': size[1] + "px"
                 });
-                rel = target.rel.split('?')[0];
-            } else {
-                this.toolTipImageContainer.setStyle({ 
-                    'width': "auto",
-                    'height': "auto"
-                });
             }
             
-            target.ttImage = new Element("img", { "src": rel, "class": this.options.imageClass });
+            target.ttImage = new Element("img", { "src": target.rel, "class": this.options.imageClass });
         }
 
         // If an image, then add it, otherwise remove any old ones
-        if (target.ttImage != null && target.ttImage.complete) {
+        if (target.ttImage != null) {
             this.toolTipImageContainer.insert(target.ttImage);
         }
 
@@ -454,5 +459,8 @@ ToolTips.DefaultOptions = {
     contentClass:           "tooltip-content",
     stemClass:              "tooltip-stem",
     imageClass:             "tooltip-image",
-    imageContainerClass:    "tooltip-image-container"
+    imageContainerClass:    "tooltip-image-container",
+    
+    // Param name of the image size
+    imageSizeParameterName: "d"
 };
