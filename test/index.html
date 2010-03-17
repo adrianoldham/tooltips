@@ -47,11 +47,15 @@
 	        margin: 0;
         }
 
-        .tooltip-container .tooltip-image {
+        .tooltip-container .tooltip-image-container {
 	        display: block;
 	        margin: 3px 0;
 	        padding: 0;
 	        background: transparent url(images/spinner-lrg.gif) no-repeat 50% 50%;
+        }
+        
+        .tooltip-container .tooltip-image {
+            display: block;
         }
 
         .tooltip-container .tooltip-stem {
@@ -187,7 +191,7 @@
     <h2>Non fixed, with target hook "bottomRight" and tip hook "left"</h2>
     <a class="t2" href="http://www.google.com" title="Big image: There's quite a big image that's being loaded below. Please wait till it loads and see how the tooltip resizes!" rel="http://hellodesignhungary.files.wordpress.com/2009/03/imac.jpg">Reall big image</a>    
     <a class="t2" href="http://www.google.com" title="Title: Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.">Tooltip #2</a>
-    <a class="t2" href="http://www.google.com" title="Prototype Logo: Image!" rel="http://www.prototypejs.org/images/logo-home.gif">Image here</a>
+    <a class="t2" href="http://www.google.com" title="Prototype Logo: Image!" rel="http://www.prototypejs.org/images/logo-home.gif?127,64">Image here</a>
     <a class="t2" href="http://www.google.com" title="Title">No content</a>
     
     <script type="text/javascript" charset="utf-8">

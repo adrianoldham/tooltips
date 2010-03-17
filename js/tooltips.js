@@ -114,11 +114,13 @@ var ToolTips = Class.create({
         this.toolTipTitle       = new Element(this.options.titleTagName, { "class": this.options.titleClass });
         this.toolTipContent     = new Element("div", { "class": this.options.contentClass });
         this.toolTipStem        = new Element("div", { "class": this.options.stemClass });
+        this.toolTipImageContainer = new Element("div", { "class": this.options.imageContainerClass });
 
         // Attach to each other
         this.toolTipContainer.insert(this.toolTipTitle);
         this.toolTipContainer.insert(this.toolTipContent);
         this.toolTipContainer.insert(this.toolTipStem);
+        this.toolTipContainer.insert(this.toolTipImageContainer);
 
         // Position absolutely
         this.toolTipContainer.setStyle({ position: "absolute" });
@@ -340,12 +342,29 @@ var ToolTips = Class.create({
 
         // If image doesn't exist, then didn't preload, so load here
         if (target.ttImage == null && (target.rel != "" && target.rel != undefined)) {
-            target.ttImage = new Element("img", { "src": target.rel, "class": this.options.imageClass });
+            var rel = target.rel;
+            
+            // Set size of image container based on rel
+            if (target.rel.indexOf('?') != -1) {
+                var size = target.rel.split('?')[1].split(',');
+                this.toolTipImageContainer.setStyle({ 
+                    'width': size[0] + "px",
+                    'height': size[1] + "px"
+                });
+                rel = target.rel.split('?')[0];
+            } else {
+                this.toolTipImageContainer.setStyle({ 
+                    'width': "auto",
+                    'height': "auto"
+                });
+            }
+            
+            target.ttImage = new Element("img", { "src": rel, "class": this.options.imageClass });
         }
 
         // If an image, then add it, otherwise remove any old ones
         if (target.ttImage != null && target.ttImage.complete) {
-            this.toolTipContainer.insert(target.ttImage);
+            this.toolTipImageContainer.insert(target.ttImage);
         }
 
         // Show, but make transparent so that we can grab the size
@@ -430,9 +449,10 @@ ToolTips.DefaultOptions = {
     titleTagName:       "h2",
 
     // Classes for dom injection
-    containerClass:     "tooltip-container",
-    titleClass:         "tooltip-title",
-    contentClass:       "tooltip-content",
-    stemClass:          "tooltip-stem",
-    imageClass:         "tooltip-image"
+    containerClass:         "tooltip-container",
+    titleClass:             "tooltip-title",
+    contentClass:           "tooltip-content",
+    stemClass:              "tooltip-stem",
+    imageClass:             "tooltip-image",
+    imageContainerClass:    "tooltip-image-container"
 };
